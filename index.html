@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DEAD HAND - Find a Device</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+<style>
+  * { box-sizing: border-box; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+  body { margin: 0; background: #0a0a0a; color: #fff; min-height: 100vh; }
+
+  .header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #222;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .header h1 {
+    color: #ff2222; font-size: 20px; letter-spacing: 3px;
+    margin: 0; font-weight: 900;
+  }
+  .header .sub {
+    color: #555; font-size: 10px; letter-spacing: 2px;
+  }
+
+  .main { padding: 20px; max-width: 600px; margin: 0 auto; }
+
+  .card {
+    background: #151515; border: 1px solid #333;
+    border-radius: 16px; padding: 18px; margin-bottom: 16px;
+  }
+
+  label { font-size: 11px; color: #888; display: block; margin-bottom: 6px; letter-spacing: 1px; }
+
+  input[type="text"] {
+    width: 100%; padding: 14px;
+    background: #000; border: 1px solid #444; border-radius: 10px;
+    color: #fff; font-size: 18px; letter-spacing: 3px;
+    text-align: center; text-transform: uppercase;
+    outline: none;
+  }
+  input[type="text"]:focus { border-color: #d4a017; }
+
+  button {
+    width: 100%; padding: 16px; border: none;
+    border-radius: 14px; font-weight: bold; font-size: 15px;
+    margin-top: 12px; cursor: pointer;
+    background: #d4a017; color: #000;
+    letter-spacing: 1px;
+  }
+  button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  .error {
+    background: #210b0b; border: 1px solid #552222;
+    color: #ff7777; padding: 12px;
+    border-radius: 10px; font-size: 12px;
+    margin-top: 12px;
+  }
+
+  .info-card {
+    background: #0d0d0d; border: 1px solid #333;
+    border-radius: 12px; padding: 14px;
+  }
+  .info-name { color: #fff; font-size: 16px; font-weight: bold; }
+  .info-code { color: #22c55e; font-size: 12px; letter-spacing: 2px; margin-top: 4px; }
+  .info-status { font-size: 12px; font-weight: bold; margin-top: 8px; }
+  .info-status.online { color: #22c55e; }
+  .info-status.offline { color: #888; }
+  .info-meta { color: #888; font-size: 11px; margin-top: 6px; line-height: 1.6; }
+
+  .lost-banner {
+    background: #2a0000; border: 1px solid #ff2222;
+    color: #ff7777; padding: 12px; border-radius: 10px;
+    font-size: 12px; font-weight: bold; margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .gmap-btn {
+    display: block; text-align: center;
+    background: #d4a017; color: #000;
+    padding: 12px; border-radius: 10px;
+    font-weight: bold; font-size: 13px;
+    text-decoration: none; margin-top: 12px;
+    letter-spacing: 1px;
+  }
+
+  #map { height: 320px; border-radius: 12px; margin-top: 12px; border: 1px solid #333; }
+
+  .footer {
+    text-align: center; color: #444;
+    font-size: 10px; padding: 20px;
+    line-height: 1.6;
+  }
+  .footer a { color: #666; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>☠️ DEAD HAND</h1>
+  <div class="sub">FIND A DEVICE</div>
+</div>
+
+<div class="main">
+  <div class="card">
+    <label>DEVICE CODE</label>
+    <input id="codeInput" type="text" placeholder="DH-XXXXXX" autocomplete="off">
+    <button id="lookupBtn">LOOK UP</button>
+    <div id="errorBox" class="error" style="display: none;"></div>
+  </div>
+
+  <div id="resultBox" style="display: none;">
+    <div id="lostBanner" class="lost-banner" style="display: none;">
+      <span>⚠️</span>
+      <span>THIS DEVICE IS REPORTED LOST</span>
+    </div>
+
+    <div class="card">
+      <div class="info-card">
+        <div id="infoName" class="info-name">—</div>
+        <div id="infoCode" class="info-code">—</div>
+        <div id="infoStatus" class="info-status">—</div>
+        <div id="infoMeta" class="info-meta"></div>
+        <a id="gmapLink" class="gmap-btn" href="#" target="_blank" style="display: none;">
+          VIEW ON GOOGLE MAPS
+        </a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div id="map"></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    DEAD HAND · Joheliv Labs · South Africa<br>
+    If you have found a lost device, please contact the owner.
+  </div>
+</div>
+
+<script>
+// ---- Firebase config (same as the app) ----
+const firebaseConfig = {
+    apiKey:            "AIzaSyDNF5lQPOykjetuB4fPQ6XalQJnuWvc9PQ",
+    authDomain:        "dead-man-s-switch-3344a.firebaseapp.com",
+    databaseURL:       "https://dead-man-s-switch-3344a-default-rtdb.firebaseio.com",
+    projectId:         "dead-man-s-switch-3344a",
+    storageBucket:     "dead-man-s-switch-3344a.appspot.com",
+    messagingSenderId: "643809059953",
+    appId:             "1:643809059953:web:387f2b42f7acc480cc67d0"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+const $ = (id) => document.getElementById(id);
+
+let map = null;
+let marker = null;
+
+function normalizeCode(raw) {
+  let c = String(raw || "").trim().toUpperCase().replace(/\s+/g, "");
+  if (!c.startsWith("DH-")) {
+    c = c.replace(/^DH/, "");
+    c = "DH-" + c;
+  }
+  return c;
+}
+
+function showError(msg) {
+  $("errorBox").style.display = "block";
+  $("errorBox").textContent = msg;
+  $("resultBox").style.display = "none";
+}
+
+function clearError() {
+  $("errorBox").style.display = "none";
+  $("errorBox").textContent = "";
+}
+
+async function lookup() {
+  clearError();
+
+  const raw = $("codeInput").value.trim();
+  if (!raw) { showError("Enter a code."); return; }
+
+  const code = normalizeCode(raw);
+  $("lookupBtn").disabled = true;
+  $("lookupBtn").textContent = "LOOKING UP…";
+
+  try {
+    const codeSnap = await db.ref("codes/" + code).get();
+    if (!codeSnap.exists()) { showError("No device found with that code."); return; }
+
+    const uid = codeSnap.val();
+    const profSnap = await db.ref("users/" + uid + "/profile").get();
+    if (!profSnap.exists()) { showError("Profile not found."); return; }
+
+    const profile = profSnap.val() || {};
+    const loc = profile.lastLocation || null;
+    const lost = profile.lost && profile.lost.reported === true;
+
+    const now = Date.now();
+    const lastActive = profile.lastActive || 0;
+    const online = lastActive > 0 && (now - lastActive) < 180000;
+
+    // Populate
+    $("infoName").textContent = profile.name || "User";
+    $("infoCode").textContent = profile.code || code;
+    $("infoStatus").textContent = "Status: " + (online ? "Online" : "Offline");
+    $("infoStatus").className = "info-status " + (online ? "online" : "offline");
+
+    let meta = "";
+    if (loc && loc.time) {
+      meta += "Last seen: " + new Date(loc.time).toLocaleString() + "<br>";
+    }
+    if (loc && loc.lat && loc.lon) {
+      meta += "Coordinates: " + Number(loc.lat).toFixed(6) + ", " + Number(loc.lon).toFixed(6);
+      if (loc.acc) meta += " (±" + Math.round(loc.acc) + "m)";
+    } else {
+      meta += "No location recorded yet.";
+    }
+    $("infoMeta").innerHTML = meta;
+
+    // Lost banner
+    $("lostBanner").style.display = lost ? "flex" : "none";
+
+    // Google Maps button
+    if (loc && loc.lat && loc.lon) {
+      $("gmapLink").style.display = "block";
+      $("gmapLink").href = "https://maps.google.com/?q=" + loc.lat + "," + loc.lon;
+    } else {
+      $("gmapLink").style.display = "none";
+    }
+
+    // Map
+    $("resultBox").style.display = "block";
+    if (loc && loc.lat && loc.lon) {
+      setTimeout(() => {
+        if (!map) {
+          map = L.map("map").setView([loc.lat, loc.lon], 15);
+          L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            { maxZoom: 19 }).addTo(map);
+        } else {
+          map.setView([loc.lat, loc.lon], 15);
+        }
+        if (marker) map.removeLayer(marker);
+        marker = L.marker([loc.lat, loc.lon]).addTo(map)
+          .bindPopup(profile.name || "Device").openPopup();
+        map.invalidateSize();
+      }, 100);
+    }
+  } catch (e) {
+    showError("Lookup failed: " + e.message);
+  } finally {
+    $("lookupBtn").disabled = false;
+    $("lookupBtn").textContent = "LOOK UP";
+  }
+}
+
+$("lookupBtn").addEventListener("click", lookup);
+$("codeInput").addEventListener("keypress", (e) => {
+  if (e.key === "Enter") lookup();
+});
+</script>
+
+</body>
+</html>
