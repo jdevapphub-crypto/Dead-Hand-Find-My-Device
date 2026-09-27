@@ -59,9 +59,21 @@
   }
   button:disabled { opacity: 0.6; cursor: not-allowed; }
 
+  .ring-btn {
+    background: #7c3aed; color: #fff;
+    margin-top: 10px;
+  }
+
   .error {
     background: #210b0b; border: 1px solid #552222;
     color: #ff7777; padding: 12px;
+    border-radius: 10px; font-size: 12px;
+    margin-top: 12px;
+  }
+
+  .success {
+    background: #09200f; border: 1px solid #155c2d;
+    color: #4ade80; padding: 12px;
     border-radius: 10px; font-size: 12px;
     margin-top: 12px;
   }
@@ -133,6 +145,9 @@
         <a id="gmapLink" class="gmap-btn" href="#" target="_blank" style="display: none;">
           VIEW ON GOOGLE MAPS
         </a>
+        <button id="ringBtn" class="ring-btn" style="display: none;">🔔 RING THIS DEVICE</button>
+        <div id="ringMsg" class="success" style="display: none;"></div>
+        <div id="ringErr" class="error" style="display: none;"></div>
       </div>
     </div>
 
@@ -148,7 +163,9 @@
 </div>
 
 <script>
-// ---- Firebase config (same as the app) ----
+const PUSH_URL = "https://deadhand-push-server.onrender.com/send-push";
+const PUSH_AUTH = "dh-push-2026-secret-key";
+
 const firebaseConfig = {
     apiKey:            "AIzaSyDNF5lQPOykjetuB4fPQ6XalQJnuWvc9PQ",
     authDomain:        "dead-man-s-switch-3344a.firebaseapp.com",
@@ -166,6 +183,8 @@ const $ = (id) => document.getElementById(id);
 
 let map = null;
 let marker = null;
+let currentUid = null;
+let currentToken = null;
 
 function normalizeCode(raw) {
   let c = String(raw || "").trim().toUpperCase().replace(/\s+/g, "");
@@ -187,8 +206,16 @@ function clearError() {
   $("errorBox").textContent = "";
 }
 
+function clearRing() {
+  $("ringMsg").style.display = "none";
+  $("ringErr").style.display = "none";
+  $("ringMsg").textContent = "";
+  $("ringErr").textContent = "";
+}
+
 async function lookup() {
   clearError();
+  clearRing();
 
   const raw = $("codeInput").value.trim();
   if (!raw) { showError("Enter a code."); return; }
@@ -202,18 +229,22 @@ async function lookup() {
     if (!codeSnap.exists()) { showError("No device found with that code."); return; }
 
     const uid = codeSnap.val();
+    currentUid = uid;
+
     const profSnap = await db.ref("users/" + uid + "/profile").get();
     if (!profSnap.exists()) { showError("Profile not found."); return; }
 
     const profile = profSnap.val() || {};
     const loc = profile.lastLocation || null;
     const lost = profile.lost && profile.lost.reported === true;
+    const fcmToken = profile.fcmToken || null;
+    currentToken = fcmToken;
 
     const now = Date.now();
     const lastActive = profile.lastActive || 0;
     const online = lastActive > 0 && (now - lastActive) < 180000;
 
-    // Populate
+    // Populate info
     $("infoName").textContent = profile.name || "User";
     $("infoCode").textContent = profile.code || code;
     $("infoStatus").textContent = "Status: " + (online ? "Online" : "Offline");
@@ -242,8 +273,13 @@ async function lookup() {
       $("gmapLink").style.display = "none";
     }
 
-    // Map
+    // Ring button — show if the target has an FCM token
+    $("ringBtn").style.display = fcmToken ? "block" : "none";
+
+    // Show result
     $("resultBox").style.display = "block";
+
+    // Draw map
     if (loc && loc.lat && loc.lon) {
       setTimeout(() => {
         if (!map) {
@@ -267,7 +303,54 @@ async function lookup() {
   }
 }
 
+async function ringDevice() {
+  clearRing();
+
+  if (!currentToken) {
+    $("ringErr").style.display = "block";
+    $("ringErr").textContent = "This device has no FCM token — is the app installed?";
+    return;
+  }
+
+  const btn = $("ringBtn");
+  btn.disabled = true;
+  btn.textContent = "RINGING…";
+
+  try {
+    const res = await fetch(PUSH_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-auth-token": PUSH_AUTH
+      },
+      body: JSON.stringify({
+        token: currentToken,
+        title: "RING DEVICE",
+        body: "Someone is trying to locate this phone.",
+        data: { type: "ring", fromName: "DEAD HAND website" }
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      $("ringErr").style.display = "block";
+      $("ringErr").textContent = "Ring failed: " + err;
+      return;
+    }
+
+    $("ringMsg").style.display = "block";
+    $("ringMsg").textContent = "🔔 Ring sent. The device will ring if the app is open.";
+  } catch (e) {
+    $("ringErr").style.display = "block";
+    $("ringErr").textContent = "Error: " + e.message;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "🔔 RING THIS DEVICE";
+  }
+}
+
 $("lookupBtn").addEventListener("click", lookup);
+$("ringBtn").addEventListener("click", ringDevice);
 $("codeInput").addEventListener("keypress", (e) => {
   if (e.key === "Enter") lookup();
 });
