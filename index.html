@@ -59,35 +59,22 @@
   }
   button:disabled { opacity: 0.6; cursor: not-allowed; }
 
-  .ring-btn {
-    background: #7c3aed; color: #fff;
-    margin-top: 10px;
-  }
-
-  .lost-btn {
-    background: #ff2222; color: #fff;
-    margin-top: 10px;
-  }
-
+  .ring-btn { background: #7c3aed; color: #fff; margin-top: 10px; }
+  .lost-btn { background: #ff2222; color: #fff; margin-top: 10px; }
   .clear-lost-btn {
-    background: transparent;
-    color: #22c55e;
-    border: 1px solid #22c55e;
-    margin-top: 10px;
+    background: transparent; color: #22c55e;
+    border: 1px solid #22c55e; margin-top: 10px;
   }
 
   .error {
     background: #210b0b; border: 1px solid #552222;
     color: #ff7777; padding: 12px;
-    border-radius: 10px; font-size: 12px;
-    margin-top: 12px;
+    border-radius: 10px; font-size: 12px; margin-top: 12px;
   }
-
   .success {
     background: #09200f; border: 1px solid #155c2d;
     color: #4ade80; padding: 12px;
-    border-radius: 10px; font-size: 12px;
-    margin-top: 12px;
+    border-radius: 10px; font-size: 12px; margin-top: 12px;
   }
 
   .info-card {
@@ -119,12 +106,133 @@
 
   #map { height: 320px; border-radius: 12px; margin-top: 12px; border: 1px solid #333; }
 
+  /* Full-screen views */
+  .fullscreen {
+    position: fixed;
+    inset: 0;
+    background: #0a0a0a;
+    z-index: 2000;
+    overflow-y: auto;
+  }
+  .fullscreen.hidden { display: none; }
+  .fs-header {
+    position: sticky; top: 0;
+    background: #0a0a0a;
+    border-bottom: 1px solid #222;
+    padding: 14px 16px;
+    display: flex; align-items: center; gap: 12px;
+    z-index: 100;
+  }
+  .fs-back {
+    background: #222; color: #fff;
+    border: 1px solid #444; border-radius: 10px;
+    padding: 8px 14px; font-size: 12px;
+    cursor: pointer; width: auto; margin: 0;
+    font-weight: bold; letter-spacing: 1px;
+  }
+  .fs-back:hover { background: #333; }
+  .fs-title {
+    color: #ff2222; font-size: 13px;
+    letter-spacing: 2px; font-weight: bold;
+  }
+  .fs-body {
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .fs-body h3 {
+    color: #d4a017; font-size: 12px;
+    letter-spacing: 1px; margin: 18px 0 6px;
+  }
+  .fs-body p {
+    color: #aaa; font-size: 12px;
+    line-height: 1.7; margin: 6px 0;
+  }
+  .fs-body ul {
+    color: #aaa; font-size: 12px;
+    line-height: 1.8; padding-left: 18px; margin: 6px 0;
+  }
+  .fs-body a { color: #22c55e; text-decoration: none; }
+  .fs-body a:hover { text-decoration: underline; }
+
+  .download-card {
+    background: #0d1a0d;
+    border: 1px solid #1a3a1a;
+    border-radius: 12px;
+    padding: 18px;
+    text-align: center;
+    margin: 12px 0;
+  }
+  .download-card .price {
+    color: #d4a017; font-size: 26px;
+    font-weight: 900; margin: 8px 0;
+  }
+  .download-card .note {
+    color: #888; font-size: 11px;
+    margin-top: 8px; line-height: 1.6;
+  }
+  .download-card ul {
+    text-align: left;
+    display: inline-block;
+    margin: 8px auto;
+  }
+  .pay-btn {
+    display: inline-block;
+    background: #ff2222; color: #fff;
+    padding: 14px 30px; border-radius: 12px;
+    font-weight: bold; font-size: 14px;
+    text-decoration: none; margin-top: 12px;
+    letter-spacing: 1px;
+  }
+  .pay-btn:hover { background: #cc1111; }
+  .free-btn {
+    display: inline-block;
+    background: #22c55e; color: #000;
+    padding: 14px 30px; border-radius: 12px;
+    font-weight: bold; font-size: 14px;
+    text-decoration: none; margin-top: 12px;
+    letter-spacing: 1px;
+  }
+  .free-btn:hover { background: #16a34a; }
+
+  .status-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .status-row {
+    background: #0d0d0d;
+    border: 1px solid #222;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 11px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .status-row .label { color: #888; }
+  .status-row .value { color: #fff; font-weight: bold; }
+  .status-row .value.on { color: #22c55e; }
+  .status-row .value.warn { color: #d4a017; }
+  .status-row .value.off { color: #ff5555; }
+
   .footer {
     text-align: center; color: #444;
-    font-size: 10px; padding: 20px;
-    line-height: 1.6;
+    font-size: 10px; padding: 24px 20px;
+    line-height: 1.8;
+    border-top: 1px solid #1a1a1a;
   }
-  .footer a { color: #666; }
+  .footer-links {
+    margin-top: 10px;
+    display: flex; justify-content: center;
+    flex-wrap: wrap; gap: 8px;
+  }
+  .footer-links a {
+    color: #666; cursor: pointer;
+    text-decoration: none;
+  }
+  .footer-links a:hover { color: #ff2222; }
 </style>
 </head>
 <body>
@@ -171,14 +279,222 @@
       <div id="map"></div>
     </div>
   </div>
+</div>
 
-  <div class="footer">
-    DEAD HAND · Joheliv Labs · South Africa<br>
-    If you have found a lost device, please contact the owner.
+<div class="footer">
+  DEAD HAND · Joheliv Labs · South Africa<br>
+  If you have found a lost device, please contact the owner.
+  <div class="footer-links">
+    <a onclick="openScreen('screenDownload')">Get the App</a>
+    <span>·</span>
+    <a onclick="openScreen('screenHow')">How It Works</a>
+    <span>·</span>
+    <a onclick="openScreen('screenAbout')">About</a>
+    <span>·</span>
+    <a onclick="openScreen('screenPolicy')">Privacy</a>
+  </div>
+</div>
+
+<!-- SCREEN: HOW IT WORKS -->
+<div id="screenHow" class="fullscreen hidden">
+  <div class="fs-header">
+    <button class="fs-back" onclick="closeScreen('screenHow')">← BACK</button>
+    <span class="fs-title">HOW THE TRACKER WORKS</span>
+  </div>
+  <div class="fs-body">
+    <h3>1. WHAT GETS TRACKED</h3>
+    <ul>
+      <li><strong>GPS location</strong> — sent to our Firebase database.</li>
+      <li><strong>Last active time</strong> — when the phone last reported in.</li>
+      <li><strong>Battery level</strong> — so you know if the phone is about to die.</li>
+      <li><strong>Charging state</strong> — plugged in or on battery.</li>
+      <li><strong>Network status</strong> — WiFi or mobile data.</li>
+    </ul>
+
+    <h3>2. HOW OFTEN</h3>
+    <ul>
+      <li><strong>Normal mode:</strong> every 30 seconds.</li>
+      <li><strong>Lost mode:</strong> every 15 seconds.</li>
+      <li><strong>Ring command:</strong> immediate — wakes the phone and forces a fresh GPS read.</li>
+    </ul>
+
+    <h3>3. WHEN THE PHONE IS OFFLINE</h3>
+    <p>The phone writes its last known location to Firebase every time it has internet. If it goes offline (airplane mode, dead battery, network down), the last position stays in the cloud. The moment the phone reconnects, it sends its new location within seconds.</p>
+
+    <h3>4. LIVE STATUS MEANINGS</h3>
+    <div class="status-grid">
+      <div class="status-row">
+        <span class="label">🟢 Online</span>
+        <span class="value on">Reporting now</span>
+      </div>
+      <div class="status-row">
+        <span class="label">🟡 Recent</span>
+        <span class="value warn">Active in last hour</span>
+      </div>
+      <div class="status-row">
+        <span class="label">⚪ Offline</span>
+        <span class="value off">No signal for over an hour</span>
+      </div>
+    </div>
+
+    <h3>5. RING MY DEVICE</h3>
+    <p>If a phone is lost, you can ring it remotely. The phone wakes up, plays a loud alarm on full volume, and shows a full-screen alert that only the holder can silence. The ring also forces a fresh GPS read.</p>
+
+    <h3>6. REPORT AS LOST</h3>
+    <p>Flag a device as LOST in one tap. The last known location is stored, and you'll be notified the moment the phone comes back online.</p>
+
+    <h3>7. LIMITS — THE HONEST TRUTH</h3>
+    <ul>
+      <li>If the phone is <strong>off</strong>, GPS is off — nothing can track it.</li>
+      <li>If the phone is <strong>offline</strong>, only the last known position is available.</li>
+      <li>If the phone is <strong>factory reset</strong> or the app is deleted, tracking stops.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- SCREEN: DOWNLOAD -->
+<div id="screenDownload" class="fullscreen hidden">
+  <div class="fs-header">
+    <button class="fs-back" onclick="closeScreen('screenDownload')">← BACK</button>
+    <span class="fs-title">GET THE APP</span>
+  </div>
+  <div class="fs-body">
+    <p>Two ways to install DEAD HAND:</p>
+
+    <div class="download-card">
+      <h3 style="color:#22c55e;margin-top:0;">DIRECT DOWNLOAD</h3>
+      <p style="color:#aaa;">Get the app from the store.</p>
+      <!-- TODO: paste your download URL below -->
+      <a class="free-btn" href="#">⬇️ DOWNLOAD APP</a>
+      <div class="note"><em>Visit store.</em></div>
+    </div>
+
+    <div class="download-card">
+      <h3 style="color:#d4a017;margin-top:0;">PERSONAL ACTIVATION — R70</h3>
+      <p style="color:#aaa;">
+        Our team will set up the app for you personally, configure your
+        emergency contacts, test the alarms, and confirm it works.
+      </p>
+      <div class="price">R70 <span style="font-size:12px;color:#888;">once-off</span></div>
+      <ul>
+        <li>App installed and configured</li>
+        <li>Safety Mode + Safe Zones enabled</li>
+        <li>Ring Device tested</li>
+        <li>Emergency contacts added</li>
+        <li>Delivered within <strong>15 hours</strong> after payment</li>
+      </ul>
+      <br>
+      <!-- TODO: paste your payment URL below -->
+      <a class="pay-btn" href="#" target="_blank" rel="noopener">
+        💳 PAY R70 & GET THE APP
+      </a>
+      <div class="note">
+        After payment, we will contact you on the number or email you provide.
+        <em>Payment via yoco.</em>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN: ABOUT -->
+<div id="screenAbout" class="fullscreen hidden">
+  <div class="fs-header">
+    <button class="fs-back" onclick="closeScreen('screenAbout')">← BACK</button>
+    <span class="fs-title">ABOUT DEAD HAND</span>
+  </div>
+  <div class="fs-body">
+    <p>
+      DEAD HAND is a personal safety app built in South Africa. It notifies
+      your trusted people if you do not check in — and helps you find a
+      lost or stolen phone.
+    </p>
+
+    <h3>WHAT IT DOES</h3>
+    <ul>
+      <li><strong>Safety Mode</strong> — check-in timer, SMS alerts if you don't check in.</li>
+      <li><strong>Safe Zones</strong> — trusted places, alert if you're away too long.</li>
+      <li><strong>Group Safety Mode</strong> — up to 7 people tracking each other live.</li>
+      <li><strong>Find My Device</strong> — locate someone by their code.</li>
+      <li><strong>Ring My Device</strong> — remote ring a lost phone.</li>
+      <li><strong>Report as Lost</strong> — get notified when it comes online.</li>
+    </ul>
+
+    <h3>WHO IT'S FOR</h3>
+    <p>Commuters, hikers, students, parents, elderly — anyone who goes places where a check-in matters.</p>
+
+    <h3>WHO MADE IT</h3>
+    <p>
+      <strong>Joheliv Labs</strong><br>
+      Also known as <strong>Jason's Labs</strong><br>
+      South Africa<br><br>
+      Contact: <a href="mailto:deadhandjoheliv@gmail.com">deadhandjoheliv@gmail.com</a><br>
+      Version 5.0 · © 2026
+    </p>
+  </div>
+</div>
+
+<!-- SCREEN: PRIVACY -->
+<div id="screenPolicy" class="fullscreen hidden">
+  <div class="fs-header">
+    <button class="fs-back" onclick="closeScreen('screenPolicy')">← BACK</button>
+    <span class="fs-title">PRIVACY POLICY</span>
+  </div>
+  <div class="fs-body">
+    <p>Last updated: 2026</p>
+
+    <h3>1. WHAT WE COLLECT</h3>
+    <ul>
+      <li><strong>GPS location</strong> — used to show your position to people you trust.</li>
+      <li><strong>Email</strong> — used only to sign you in.</li>
+      <li><strong>Display name</strong> — shown to your trusted contacts and code lookups.</li>
+      <li><strong>Device identifier</strong> — a random ID stored on your phone.</li>
+      <li><strong>Contacts you add</strong> — codes and phone numbers of your chosen partners.</li>
+      <li><strong>FCM token</strong> — to deliver push notifications.</li>
+    </ul>
+
+    <h3>2. WHERE YOUR DATA LIVES</h3>
+    <p>Google Firebase (United States, us-central1).</p>
+
+    <h3>3. WHO CAN SEE YOUR DATA</h3>
+    <ul>
+      <li>You.</li>
+      <li>Anyone you share your unique code with.</li>
+      <li>Your trusted partners.</li>
+      <li>BulkSMS — receives phone numbers to send SMS alerts.</li>
+      <li>Google Firebase — hosts the data.</li>
+    </ul>
+    <p>We never sell your data. We never share it with advertisers.</p>
+
+    <h3>4. LOCATION DATA</h3>
+    <p>Only accessed while the app is open or a safety feature is enabled. You can turn off any feature at any time.</p>
+
+    <h3>5. YOUR RIGHTS</h3>
+    <p>
+      You can delete your account, remove partners, remove Safe Zones,
+      and request a copy of your data.
+      Contact: <a href="mailto:deadhandjoheliv@gmail.com">deadhandjoheliv@gmail.com</a>
+    </p>
+
+    <h3>6. CHILDREN</h3>
+    <p>DEAD HAND is not intended for users under 16.</p>
   </div>
 </div>
 
 <script>
+// ---------- NAVIGATION ----------
+function openScreen(id) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.classList.remove('hidden');
+    window.scrollTo(0, 0);
+  }
+}
+function closeScreen(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.add('hidden');
+}
+
+// ---------- CONFIG ----------
 const PUSH_URL = "https://deadhand-push-server.onrender.com/send-push";
 const PUSH_AUTH = "dh-push-2026-secret-key";
 
@@ -217,19 +533,16 @@ function showError(msg) {
   $("errorBox").textContent = msg;
   $("resultBox").style.display = "none";
 }
-
 function clearError() {
   $("errorBox").style.display = "none";
   $("errorBox").textContent = "";
 }
-
 function clearRing() {
   $("ringMsg").style.display = "none";
   $("ringErr").style.display = "none";
   $("ringMsg").textContent = "";
   $("ringErr").textContent = "";
 }
-
 function clearLost() {
   $("lostMsg").style.display = "none";
   $("lostErr").style.display = "none";
@@ -297,8 +610,6 @@ async function lookup() {
     }
 
     $("ringBtn").style.display = fcmToken ? "block" : "none";
-
-    // Lost button visibility
     $("reportLostBtn").style.display = lost ? "none" : "block";
     $("clearLostBtn").style.display = lost ? "block" : "none";
 
@@ -329,24 +640,18 @@ async function lookup() {
 
 async function ringDevice() {
   clearRing();
-
   if (!currentToken) {
     $("ringErr").style.display = "block";
     $("ringErr").textContent = "This device has no FCM token — is the app installed?";
     return;
   }
-
   const btn = $("ringBtn");
   btn.disabled = true;
   btn.textContent = "RINGING…";
-
   try {
     const res = await fetch(PUSH_URL, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-auth-token": PUSH_AUTH
-      },
+      headers: { "Content-Type": "application/json", "x-auth-token": PUSH_AUTH },
       body: JSON.stringify({
         token: currentToken,
         title: "RING DEVICE",
@@ -354,16 +659,14 @@ async function ringDevice() {
         data: { type: "ring", fromName: "DEAD HAND website" }
       })
     });
-
     if (!res.ok) {
       const err = await res.text();
       $("ringErr").style.display = "block";
       $("ringErr").textContent = "Ring failed: " + err;
       return;
     }
-
     $("ringMsg").style.display = "block";
-    $("ringMsg").textContent = "🔔 Ring sent. The device will ring if the app is open.";
+    $("ringMsg").textContent = "🔔 Ring sent. The device will ring.";
   } catch (e) {
     $("ringErr").style.display = "block";
     $("ringErr").textContent = "Error: " + e.message;
@@ -375,28 +678,16 @@ async function ringDevice() {
 
 async function reportLost() {
   clearLost();
-
   if (!currentUid) return;
-
-  const confirm = window.confirm(
-    "Report this device as LOST?\n\n" +
-    "Anyone looking up this code will see a LOST banner."
-  );
-  if (!confirm) return;
-
+  if (!window.confirm("Report this device as LOST?\n\nAnyone looking up this code will see a LOST banner.")) return;
   const btn = $("reportLostBtn");
   btn.disabled = true;
   btn.textContent = "REPORTING…";
-
   try {
     await db.ref("users/" + currentUid + "/profile/lost").set({
-      reported: true,
-      reportedBy: "website",
-      reportedAt: Date.now()
+      reported: true, reportedBy: "website", reportedAt: Date.now()
     });
-
     currentLost = true;
-
     $("lostBanner").style.display = "flex";
     $("reportLostBtn").style.display = "none";
     $("clearLostBtn").style.display = "block";
@@ -413,21 +704,14 @@ async function reportLost() {
 
 async function clearLostStatus() {
   clearLost();
-
   if (!currentUid) return;
-
-  const confirm = window.confirm("Clear the LOST status for this device?");
-  if (!confirm) return;
-
+  if (!window.confirm("Clear the LOST status for this device?")) return;
   const btn = $("clearLostBtn");
   btn.disabled = true;
   btn.textContent = "CLEARING…";
-
   try {
     await db.ref("users/" + currentUid + "/profile/lost").remove();
-
     currentLost = false;
-
     $("lostBanner").style.display = "none";
     $("reportLostBtn").style.display = "block";
     $("clearLostBtn").style.display = "none";
